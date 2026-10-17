@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 
 module.exports = async (req, res) => {
-    // Cho phép CORS để gọi từ extension thoải mái
+    // Bật CORS cho phép gọi từ mọi extension
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
     if (!targetUrl) {
         return res.status(400).json({ 
             success: false, 
-            error: 'Thiếu tham số URL! Hãy truyền thêm ?url=...' 
+            error: 'Thiếu tham số URL!' 
         });
     }
 
@@ -29,16 +29,16 @@ module.exports = async (req, res) => {
         });
 
         if (!response.ok) {
-            throw new Error(`Lỗi kết nối trang web đích: ${response.status}`);
+            throw new Error(`Lỗi kết nối trang web: ${response.status}`);
         }
 
         const html = await response.text();
         const $ = cheerio.load(html);
 
-        // Xóa các phần tử rác
+        // Xóa các thành phần rác
         $('script, style, nav, footer, header, .ads, .hidden, iframe, noscript').remove();
 
-        // Tìm kiếm các vùng chứa nội dung truyện phổ biến
+        // Tìm vùng chứa nội dung truyện
         const selectors = [
             '.chapter-c', 
             '.reading-content', 
@@ -46,8 +46,7 @@ module.exports = async (req, res) => {
             'article', 
             '.box-content', 
             '.chapter-content', 
-            '.entry-content',
-            '.fon-con'
+            '.entry-content'
         ];
 
         let contentBox = null;
