@@ -1,1 +1,0 @@
-# novel-scraper-api
